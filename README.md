@@ -8,3 +8,4 @@ Terminal Command line for Unity3D
 
 TODO:
  - add support for commands with string parameters
+ - add get return type of a command and show in terminal
