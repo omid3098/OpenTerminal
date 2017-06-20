@@ -6,6 +6,9 @@ Terminal Command line for Unity3D
 - Run your game and press ` (the button usually on top of Tab button).
 - Type your commandName and it will be execute!
 
+Features:
+- Custom Terminal configs
+- Can get string return type of a command and show in terminal
+
 TODO:
  - add support for commands with string parameters
- - add get return type of a command and show in terminal
