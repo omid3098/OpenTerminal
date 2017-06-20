@@ -5,9 +5,11 @@ namespace Q2
     public class SampleCommand2
     {
         [Command("help")]
-        public void MyDebug2()
+        public string Help()
         {
-            Debug.Log("This is help!");
+            const string help_string = "This is help!";
+            Debug.Log(help_string);
+            return help_string;
         }
     }
 }

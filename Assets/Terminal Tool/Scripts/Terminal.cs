@@ -75,6 +75,7 @@ public class Terminal : MonoBehaviour
     private string ExecuteCommand(string inputText)
     {
         bool registered = false;
+        string result = null;
         // Debug.Log(inputText);
         foreach (var method in methods)
         {
@@ -91,30 +92,13 @@ public class Terminal : MonoBehaviour
                         var instance_class = Activator.CreateInstance(type);
                         // Type instance_method = instance_class.GetType();
                         object[] obj = new object[] { "hello" };
-                        methodInfo.Invoke(instance_class, null);
+                        result = (string)methodInfo.Invoke(instance_class, null);
                         registered = true;
                         break;
                     }
                 }
         }
-        // if (method != null) method.Invoke(inst, null);
-        // var methods = assembly.GetTypes()
-        //               .SelectMany(t => t.GetMethods())
-        //               .Where(m => m.GetCustomAttributes(typeof(CommandAttribute), false).Length > 0)
-        //               .ToArray();
-        // foreach (var item in methods)
-        // {
-        //     var attributes = item.GetCustomAttributes(true);
-        //     foreach (var attribute in attributes)
-        //     {
-        //         Debug.Log(attribute. + "!!!!");
-        //     }
-        //     if (item.Name == inputText)
-        //     {
-        //         item.Invoke(null, null);
-        //         return null;
-        //     }
-        // }
+        if (!string.IsNullOrEmpty(result)) return result;
         if (registered) return null;
         return COMMAND_NOT_FOUND;
     }
