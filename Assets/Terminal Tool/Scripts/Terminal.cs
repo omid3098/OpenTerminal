@@ -9,7 +9,7 @@ public class Terminal : MonoBehaviour
 {
     private const string COMMAND_NOT_FOUND = "Command not found! type \"help\" for list of available commands!";
     [SerializeField] private TerminalConfig config;
-    private bool displayTerminal = false;
+    [SerializeField] private bool displayTerminal = false;
     private string inputText = "";
     private string history = "";
     Dictionary<string, MethodInfo> methods = new Dictionary<string, MethodInfo>();

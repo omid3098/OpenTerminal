@@ -12,3 +12,4 @@ Features:
 
 TODO:
  - add support for commands with string parameters
+ - pass parameters from terminal

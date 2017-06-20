@@ -12,7 +12,7 @@ public class BasicCommands
     [Command("help", "Shows list of available commands")]
     public string Help()
     {
-        string help_string = "  List of available commands:";
+        string help_string = "List of available commands:";
         var methods = Terminal.instance.GetMethods();
         foreach (var method in methods)
         {
@@ -21,7 +21,7 @@ public class BasicCommands
                 if (attribute is CommandAttribute) //Does not pass
                 {
                     CommandAttribute attr = (CommandAttribute)attribute;
-                    help_string += "\n" + attr.commandName + " --> " + attr.commandDesc;
+                    help_string += "\n      " + attr.commandName + " --> " + attr.commandDesc;
                 }
             }
         }
