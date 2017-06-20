@@ -4,9 +4,15 @@ using UnityEngine;
 public class CommandAttribute : Attribute
 {
     public string commandName;
+    public string commandDesc;
 
-    public CommandAttribute(string _cn)
+    public CommandAttribute(string name)
     {
-        commandName = _cn;
+        commandName = name;
+    }
+    public CommandAttribute(string name, string desc)
+    {
+        commandName = name;
+        commandDesc = desc;
     }
 }

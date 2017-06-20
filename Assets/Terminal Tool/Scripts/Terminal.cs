@@ -7,16 +7,17 @@ using UnityEngine;
 
 public class Terminal : MonoBehaviour
 {
-    private const string COMMAND_NOT_FOUND = "Command not found! type Help for list of available commands!";
+    private const string COMMAND_NOT_FOUND = "Command not found! type \"help\" for list of available commands!";
     [SerializeField] private TerminalConfig config;
     private bool displayTerminal = false;
     private string inputText = "";
     private string history = "";
     Dictionary<string, MethodInfo> methods = new Dictionary<string, MethodInfo>();
     private GUIStyle terminalStyle;
-
+    public static Terminal instance;
     void Awake()
     {
+        instance = this;
         if (config == null) config = Resources.Load<TerminalConfig>("Config/ZSH");
         terminalStyle = new GUIStyle();
         terminalStyle.font = config.font;
@@ -35,7 +36,7 @@ public class Terminal : MonoBehaviour
         if (!displayTerminal) return;
         // GUI.color = Color.white;
         // GUI.contentColor = Color.red;
-        GUILayout.TextArea(history + consoleLine() + inputText, terminalStyle);
+        GUILayout.Label(history + consoleLine() + inputText, terminalStyle);
     }
 
     private string consoleLine()
@@ -55,10 +56,15 @@ public class Terminal : MonoBehaviour
             displayTerminal = !displayTerminal;
             return;
         }
-
+        if (!displayTerminal) return;
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
             if (inputText.Length >= 1) inputText = inputText.Substring(0, inputText.Length - 1);
+            return;
+        }
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            inputText += "    ";
             return;
         }
 
@@ -90,10 +96,24 @@ public class Terminal : MonoBehaviour
                     {
                         if (registered) Debug.LogError("Multiple commands are defined with: " + inputText);
                         Type type = (methodInfo.DeclaringType);
-                        var instance_class = Activator.CreateInstance(type);
-                        // Type instance_method = instance_class.GetType();
-                        object[] obj = new object[] { "hello" };
-                        result = (string)methodInfo.Invoke(instance_class, null);
+                        if (type.IsSubclassOf(typeof(UnityEngine.Object)))
+                        {
+                            var instance_classes = GameObject.FindObjectsOfType(type);
+                            if (instance_classes != null)
+                            {
+                                foreach (var instance_class in instance_classes)
+                                {
+                                    object[] obj = new object[] { "hello" };
+                                    result = (string)methodInfo.Invoke(instance_class, null);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var instance_class = Activator.CreateInstance(type);
+                            object[] obj = new object[] { "hello" };
+                            result = (string)methodInfo.Invoke(instance_class, null);
+                        }
                         registered = true;
                         break;
                     }
@@ -102,5 +122,20 @@ public class Terminal : MonoBehaviour
         if (!string.IsNullOrEmpty(result)) return result;
         if (registered) return null;
         return COMMAND_NOT_FOUND;
+    }
+    public void Clear()
+    {
+        StartCoroutine(ClearTerminalCoroutine());
+    }
+
+    private IEnumerator ClearTerminalCoroutine()
+    {
+        yield return new WaitForEndOfFrame();
+        history = "";
+    }
+
+    public MethodInfo[] GetMethods()
+    {
+        return methods.Values.ToArray();
     }
 }
