@@ -1,4 +1,4 @@
-# Terminal
+# Unity OpenTerminal
 Terminal Command line for Unity3D
 
 ![openterminal](https://user-images.githubusercontent.com/6388730/27359237-f97a8cc2-562f-11e7-8039-db8c282b6081.gif)
