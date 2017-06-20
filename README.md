@@ -19,3 +19,4 @@ Terminal Command line for Unity3D
 
 ### TODO:
  - pass parameters from terminal
+ - autocomplete
