@@ -1,9 +1,11 @@
 using System;
 using UnityEngine;
-
-public abstract class TerminalConfig
+[CreateAssetMenu()]
+public class TerminalConfig : ScriptableObject
 {
-    public abstract string arrow { get; }
-    public abstract string backslash { get; }
-    public abstract string console { get; }
+    public string arrow;
+    public string backslash;
+    public string console;
+    public Font font;
+    public Color commandColor;
 }

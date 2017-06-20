@@ -8,16 +8,20 @@ using UnityEngine;
 public class Terminal : MonoBehaviour
 {
     private const string COMMAND_NOT_FOUND = "Command not found! type Help for list of available commands!";
-    private TerminalConfig config;
+    [SerializeField] private TerminalConfig config;
     private bool displayTerminal = false;
     private string inputText = "";
     private string history = "";
     Dictionary<string, MethodInfo> methods = new Dictionary<string, MethodInfo>();
+    private GUIStyle terminalStyle;
 
     void Awake()
     {
-        if (config == null) config = new CMD_Terminal();
-
+        if (config == null) config = Resources.Load<TerminalConfig>("Config/ZSH");
+        terminalStyle = new GUIStyle();
+        terminalStyle.font = config.font;
+        terminalStyle.fontSize = 16;
+        terminalStyle.normal.textColor = config.commandColor;
         var assembly = System.AppDomain.CurrentDomain.Load("Assembly-CSharp");
         methods = assembly
             .GetTypes()
@@ -29,7 +33,9 @@ public class Terminal : MonoBehaviour
     void OnGUI()
     {
         if (!displayTerminal) return;
-        GUILayout.TextArea(history + consoleLine() + inputText);
+        // GUI.color = Color.white;
+        // GUI.contentColor = Color.red;
+        GUILayout.TextArea(history + consoleLine() + inputText, terminalStyle);
     }
 
     private string consoleLine()
@@ -39,36 +45,31 @@ public class Terminal : MonoBehaviour
 
     void Update()
     {
-        CheckShowConsole();
-        CheckBackSpace();
         InputHandler();
-    }
-
-    private void CheckBackSpace()
-    {
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            if (inputText.Length > 1)
-                inputText = inputText.Substring(0, inputText.Length - 1);
-        }
-    }
-
-    private void CheckShowConsole()
-    {
-        if (Input.GetKeyDown("`")) displayTerminal = !displayTerminal;
     }
 
     private void InputHandler()
     {
-        if (Input.GetKeyDown("`")) return;
-        if (Input.GetKeyDown(KeyCode.Backspace)) return;
+        if (Input.GetKeyDown("`"))
+        {
+            displayTerminal = !displayTerminal;
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            if (inputText.Length >= 1) inputText = inputText.Substring(0, inputText.Length - 1);
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             string result = ExecuteCommand(inputText);
-            history += consoleLine() + inputText + "\n" + result + "\n";
+            history += consoleLine() + inputText + "\n" + (!string.IsNullOrEmpty(result) ? (result + "\n") : "");
             inputText = "";
             return;
         }
+
         inputText += Input.inputString;
     }
 
