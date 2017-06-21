@@ -14,10 +14,12 @@ Terminal Command line for Unity3D
 
 
 ### Features:
-- Custom Terminal configs
+- Custom Terminal configs.
+
 ![image](https://user-images.githubusercontent.com/6388730/27377905-8dd0b4b8-568b-11e7-83f0-775d943773a9.png)
 
 - Supports commands with simple parameters (int, string, float, double ... )
+
 ![openterminal_params](https://user-images.githubusercontent.com/6388730/27377435-34db691c-568a-11e7-9a29-89bea9755378.gif)
 - Can show return type of a command in terminal
 
