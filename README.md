@@ -25,4 +25,4 @@ Terminal Command line for Unity3D
 - Can show return type of a command in terminal
 
 TODO:
-- support vectors or other parameters whitch contain ",";
+- support vectors or other parameters which contain ",";
