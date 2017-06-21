@@ -24,4 +24,10 @@ public class RotateCube : MonoBehaviour
     {
         stop = false;
     }
+
+    [Command("move-cube", "move-cube(x,y,z) Moves the cube")]
+    public void Move(float x, float y, float z)
+    {
+        transform.position = new Vector3(x, y, z);
+    }
 }

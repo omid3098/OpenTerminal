@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class Terminal : MonoBehaviour
@@ -83,19 +84,59 @@ public class Terminal : MonoBehaviour
     {
         bool registered = false;
         string result = null;
-        // Debug.Log(inputText);
+        string insideParentheses = Regex.Match(inputText, @"\(([^)]*)\)").Groups[1].Value;
+        List<string> args = new List<string>();
+        string command;
+        if (!string.IsNullOrEmpty(insideParentheses))
+        {
+            args = insideParentheses.Split(new char[] { ',' }).ToList();
+            command = inputText.Replace(insideParentheses, "").Replace("(", "").Replace(")", "").Replace(";", "");
+        }
+        else command = inputText.Replace("(", "").Replace(")", "").Replace(";", "");
+        Debug.Log("command : " + command);
+        Debug.Log("argument : " + insideParentheses);
         foreach (var method in methods)
         {
             var methodName = method.Key;
             var methodInfo = method.Value;
             foreach (object attribute in methodInfo.GetCustomAttributes(true)) // Returns all 3 of my attributes.
-                if (attribute is CommandAttribute) //Does not pass
+                if (attribute is CommandAttribute)
                 {
-                    CommandAttribute attribute1 = (CommandAttribute)attribute;
-                    if (attribute1.commandName == inputText)
+                    CommandAttribute attr = (CommandAttribute)attribute;
+                    if (attr.commandName == command)
                     {
-                        if (registered) Debug.LogError("Multiple commands are defined with: " + inputText);
+                        if (registered) Debug.LogError("Multiple commands are defined with: " + command);
                         Type type = (methodInfo.DeclaringType);
+                        ParameterInfo[] methodParameters = methodInfo.GetParameters();
+                        List<object> argList = new List<object>();
+                        // Cast Arguments if there is any
+                        if (args.Count != 0)
+                        {
+                            if (methodParameters.Length != args.Count)
+                            {
+                                result = string.Format("Method {0} needs {1} arguments, passed {2}", methodName, methodParameters.Length, args.Count);
+                                Debug.Log(result);
+                                return result;
+                            }
+                            else
+                            {
+                                // Cast string arguments to input objects types
+                                for (int i = 0; i < methodParameters.Length; i++)
+                                {
+                                    try
+                                    {
+                                        var a = Convert.ChangeType(args[i], methodParameters[i].ParameterType);
+                                        argList.Add(a);
+                                    }
+                                    catch
+                                    {
+                                        result = string.Format("Counld not convert {0} to Type {1}", args[i], methodParameters[i].ParameterType);
+                                        Debug.LogError(result);
+                                        return result;
+                                    }
+                                }
+                            }
+                        }
                         if (type.IsSubclassOf(typeof(UnityEngine.Object)))
                         {
                             var instance_classes = GameObject.FindObjectsOfType(type);
@@ -103,16 +144,14 @@ public class Terminal : MonoBehaviour
                             {
                                 foreach (var instance_class in instance_classes)
                                 {
-                                    object[] obj = new object[] { "hello" };
-                                    result = (string)methodInfo.Invoke(instance_class, null);
+                                    result = (string)methodInfo.Invoke(instance_class, argList.ToArray());
                                 }
                             }
                         }
                         else
                         {
                             var instance_class = Activator.CreateInstance(type);
-                            object[] obj = new object[] { "hello" };
-                            result = (string)methodInfo.Invoke(instance_class, null);
+                            result = (string)methodInfo.Invoke(instance_class, argList.ToArray());
                         }
                         registered = true;
                         break;

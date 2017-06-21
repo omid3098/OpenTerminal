@@ -9,7 +9,7 @@ Terminal Command line for Unity3D
 Features:
 - Custom Terminal configs
 - Can get string return type of a command and show in terminal
+- Supports commands with simple parameters (int, string, float, double ... )
 
 TODO:
- - add support for commands with string parameters
- - pass parameters from terminal
+- support vectors or other parameters whitch contain ",";
