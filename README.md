@@ -6,7 +6,7 @@ Terminal Command line for Unity3D
 
 
 ## How to use: 
-- Add [Command("commandName")] Attribute to your methods.
+- Add [Command("commandName", "commandDescription")] Attribute to your methods.
 - Create an empty game object and add Terminal component to it.
 - Run your game and press ` (the button usually on top of Tab button).
 - Type your commandName and it will be execute!
@@ -15,6 +15,10 @@ Terminal Command line for Unity3D
 
 
 ### Features:
+- AutoComplete: press tab and see available commands
+
+![openterminal_autocomplete_](https://user-images.githubusercontent.com/6388730/27424496-735677c0-574a-11e7-82a3-ce15522d0ac5.gif)
+
 - Custom Terminal configs.
 
 ![image](https://user-images.githubusercontent.com/6388730/27377905-8dd0b4b8-568b-11e7-83f0-775d943773a9.png)
