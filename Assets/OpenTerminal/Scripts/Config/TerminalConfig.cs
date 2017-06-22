@@ -8,4 +8,5 @@ public class TerminalConfig : ScriptableObject
     public string console;
     public Font font;
     public Color commandColor;
+    public Color autoCompleteHoverColor;
 }
