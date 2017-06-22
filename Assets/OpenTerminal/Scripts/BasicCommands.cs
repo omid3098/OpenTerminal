@@ -13,8 +13,7 @@ public class BasicCommands
     public string Help()
     {
         string help_string = "List of available commands:";
-        var methods = Terminal.instance.GetMethods();
-        foreach (var method in methods)
+        foreach (var method in Terminal.instance.terminalMethods.methods)
         {
             foreach (var attribute in method.GetCustomAttributes(true))
             {
@@ -25,7 +24,6 @@ public class BasicCommands
                 }
             }
         }
-        Debug.Log(help_string);
         return help_string;
     }
 }
