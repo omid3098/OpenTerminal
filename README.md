@@ -1,5 +1,12 @@
-# Unity OpenTerminal
-Terminal Command line for Unity3D
+# Unity OpenTerminal (Mobile support!)
+
+Have you ever:
+- Wanted to use cheat codes for your games?
+- Enable GOD MODE while testing some features?
+- Add some coins without leaving the game?
+- Enable/Disable parts of your code at runtime without leaving playmode?
+
+Now you can simply do [almost!] anything at runtime using OpenTerminal!
 
 
 ![openterminal_show](https://user-images.githubusercontent.com/6388730/27379276-e5f96a0a-568f-11e7-9df7-dd341c0c9491.gif)
