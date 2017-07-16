@@ -26,4 +26,10 @@ public class BasicCommands
         }
         return help_string;
     }
+
+    [Command("hide", "Hides the terminal")]
+    public void Hide()
+    {
+        Terminal.instance.Hide();
+    }
 }

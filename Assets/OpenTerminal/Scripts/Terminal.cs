@@ -18,6 +18,7 @@ public class Terminal : MonoBehaviour
     public TerminalMethods terminalMethods;
     private TerminalInputHandler inputHandler;
     private TerminalGUI terminalGui;
+    public TouchScreenKeyboard touchScreenKeyboard;
 
     void Awake()
     {
@@ -28,6 +29,11 @@ public class Terminal : MonoBehaviour
         terminalMethods = new TerminalMethods();
         inputHandler = new TerminalInputHandler(this);
         terminalGui = new TerminalGUI(this);
+    }
+
+    internal void Hide()
+    {
+        displayTerminal = false;
     }
 
     void OnGUI()
@@ -41,6 +47,19 @@ public class Terminal : MonoBehaviour
         inputHandler.Update();
     }
 
+    /// <summary>
+    /// For Android mobile keyboard input
+    /// </summary>
+    /// <param name="inputString"></param>
+    internal void SetInputText(string inputString)
+    {
+        inputText = inputString;
+    }
+
+    /// <summary>
+    /// For PC keyboard input
+    /// </summary>
+    /// <param name="input"></param>
     public void UpdateInputText(string input)
     {
         inputText += input;
@@ -171,7 +190,21 @@ public class Terminal : MonoBehaviour
     internal void ToggleTerminal()
     {
         displayTerminal = !displayTerminal;
+        DisplayTouchScreenKeyboard();
     }
+
+    public void DisplayTouchScreenKeyboard()
+    {
+        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            if (displayTerminal)
+            {
+                touchScreenKeyboard = TouchScreenKeyboard.Open(inputText, TouchScreenKeyboardType.Default);
+                TouchScreenKeyboard.hideInput = true;
+            }
+        }
+    }
+
     internal void OnBackSpacePressed()
     {
         if (inputText.Length >= 1) inputText = inputText.Substring(0, inputText.Length - 1);

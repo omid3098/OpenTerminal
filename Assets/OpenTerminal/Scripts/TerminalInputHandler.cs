@@ -1,14 +1,26 @@
+using System;
 using UnityEngine;
 
 public class TerminalInputHandler
 {
     private Terminal terminal;
+    private int touchCounter = 0;
+    private float touchDelay = 1.5f;
+    private float ellapsedTime = 0f;
     public TerminalInputHandler(Terminal t)
     {
         terminal = t;
     }
     public void Update()
     {
+        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            if (MobileInput())
+            {
+                terminal.ToggleTerminal();
+                return;
+            }
+        }
         if (Input.GetKeyDown("`"))
         {
             terminal.ToggleTerminal();
@@ -35,6 +47,37 @@ public class TerminalInputHandler
         else if (Input.GetKeyDown(KeyCode.UpArrow))
             terminal.OnUpArrowPressed();
         else
-            terminal.UpdateInputText(Input.inputString);
+        {
+            if (Application.platform != RuntimePlatform.Android && Application.platform != RuntimePlatform.IPhonePlayer)
+                terminal.UpdateInputText(Input.inputString);
+        }
+    }
+
+    private bool MobileInput()
+    {
+        if (terminal.touchScreenKeyboard != null)
+        {
+            if (terminal.touchScreenKeyboard.done)
+            {
+                terminal.SetInputText(terminal.touchScreenKeyboard.text);
+                terminal.OnEnterPressed();
+                terminal.touchScreenKeyboard = null;
+            }
+        }
+        if (Input.touchCount == 4)
+        {
+            ellapsedTime += Time.deltaTime;
+        }
+        if (ellapsedTime > touchDelay)
+        {
+            ellapsedTime = 0;
+            if (terminal.displayTerminal)
+            {
+                terminal.DisplayTouchScreenKeyboard();
+                return false;
+            }
+            return true;
+        }
+        else return false;
     }
 }
