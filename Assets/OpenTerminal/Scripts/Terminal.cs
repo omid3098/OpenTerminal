@@ -19,11 +19,13 @@ public class Terminal : MonoBehaviour
     private TerminalInputHandler inputHandler;
     private TerminalGUI terminalGui;
     public TouchScreenKeyboard touchScreenKeyboard;
+    public int mobileTouchCount = 4;
 
     void Awake()
     {
         instance = this;
         if (config == null) config = Resources.Load<TerminalConfig>("Config/ZSH");
+        if (mobileTouchCount <= 0) mobileTouchCount = 4;
         autoCompIndex = 0;
         autoCompList = new List<string>();
         terminalMethods = new TerminalMethods();

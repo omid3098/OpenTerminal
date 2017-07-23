@@ -64,7 +64,7 @@ public class TerminalInputHandler
                 terminal.touchScreenKeyboard = null;
             }
         }
-        if (Input.touchCount == 4)
+        if (Input.touchCount == terminal.mobileTouchCount)
         {
             ellapsedTime += Time.deltaTime;
         }
