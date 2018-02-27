@@ -116,9 +116,9 @@ public class Terminal : MonoBehaviour
         foreach (var method in terminalMethods.methods)
         {
             foreach (object attribute in method.GetCustomAttributes(true)) // Returns all 3 of my attributes.
-                if (attribute is CommandAttribute)
+                if (attribute is TerminalCommandAttribute)
                 {
-                    CommandAttribute attr = (CommandAttribute)attribute;
+                    TerminalCommandAttribute attr = (TerminalCommandAttribute)attribute;
                     if (attr.commandName == command)
                     {
                         if (registered) Debug.LogError(TerminalStrings.MULTIPLE_COMMAND_NAMES + command);

@@ -12,20 +12,20 @@ public class RotateCube : MonoBehaviour
     }
 
 
-    [Command("stop-cube", "stops the cube from rotating")]
+    [TerminalCommand("stop-cube", "stops the cube from rotating")]
     public void StopCube()
     {
         stop = true;
     }
 
 
-    [Command("rotate-cube", "rotates the cube")]
+    [TerminalCommand("rotate-cube", "rotates the cube")]
     public void RotateTheCube()
     {
         stop = false;
     }
 
-    [Command("move-cube", "move-cube(x,y,z) Moves the cube")]
+    [TerminalCommand("move-cube", "move-cube(x,y,z) Moves the cube")]
     public void Move(float x, float y, float z)
     {
         transform.position = new Vector3(x, y, z);

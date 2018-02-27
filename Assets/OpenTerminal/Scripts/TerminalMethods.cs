@@ -10,19 +10,19 @@ public class TerminalMethods
     public TerminalMethods()
     {
         methods = new List<MethodInfo>();
-        var assembly = System.AppDomain.CurrentDomain.Load("Assembly-CSharp");
-        methods = assembly
-            .GetTypes()
-            .SelectMany(x => x.GetMethods())
-            .Where(y => y.GetCustomAttributes(true).OfType<CommandAttribute>().Any()).ToList();
-        foreach (var method in methods)
+
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
-            foreach (var attribute in method.GetCustomAttributes(true))
+            foreach (var method in assembly.GetTypes().SelectMany(x => x.GetMethods()).Where(y => y.GetCustomAttributes(true).OfType<TerminalCommandAttribute>().Any()).ToList())
             {
-                if (attribute is CommandAttribute) //Does not pass
+                methods.Add(method)
+                foreach (var attribute in method.GetCustomAttributes(true))
                 {
-                    CommandAttribute attr = (CommandAttribute)attribute;
-                    methodNames.Add(attr.commandName);
+                    if (attribute is TerminalCommandAttribute) //Does not pass
+                    {
+                        TerminalCommandAttribute attr = (TerminalCommandAttribute)attribute;
+                        methodNames.Add(attr.commandName);
+                    }
                 }
             }
         }
