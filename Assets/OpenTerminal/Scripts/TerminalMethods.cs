@@ -11,10 +11,11 @@ public class TerminalMethods
     {
         methods = new List<MethodInfo>();
 
-        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
             foreach (var method in assembly.GetTypes().SelectMany(x => x.GetMethods()).Where(y => y.GetCustomAttributes(true).OfType<TerminalCommandAttribute>().Any()).ToList())
             {
+                methods.Add(method)
                 foreach (var attribute in method.GetCustomAttributes(true))
                 {
                     if (attribute is TerminalCommandAttribute) //Does not pass
