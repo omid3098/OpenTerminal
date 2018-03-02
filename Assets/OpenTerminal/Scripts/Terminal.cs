@@ -65,6 +65,7 @@ public class Terminal : MonoBehaviour
     public void UpdateInputText(string input)
     {
         inputText += input;
+        inputText = inputText.Replace("\b", "");
     }
 
     public void OnUpArrowPressed()
