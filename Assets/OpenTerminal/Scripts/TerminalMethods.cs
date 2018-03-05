@@ -15,7 +15,7 @@ public class TerminalMethods
         {
             foreach (var method in assembly.GetTypes().SelectMany(x => x.GetMethods()).Where(y => y.GetCustomAttributes(true).OfType<TerminalCommandAttribute>().Any()).ToList())
             {
-                methods.Add(method)
+                methods.Add(method);
                 foreach (var attribute in method.GetCustomAttributes(true))
                 {
                     if (attribute is TerminalCommandAttribute) //Does not pass
