@@ -39,7 +39,8 @@ Now you can simply do [almost!] anything at runtime using OpenTerminal!
 ![openterminal_params](https://user-images.githubusercontent.com/6388730/27377435-34db691c-568a-11e7-9a29-89bea9755378.gif)
 - Can show return type of a command in terminal
 
-## Contact: you can find me @omid3098 in twitter.
+## Contact: 
+  you can find me [@omid3098](https://twitter.com/omid3098) in twitter.
 
 TODO:
 - support vectors or other parameters which contain ",";
