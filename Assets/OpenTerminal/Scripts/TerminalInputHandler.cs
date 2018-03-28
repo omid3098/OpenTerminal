@@ -4,7 +4,6 @@ using UnityEngine;
 public class TerminalInputHandler
 {
     private Terminal terminal;
-    private int touchCounter = 0;
     private float touchDelay = 1.5f;
     private float ellapsedTime = 0f;
     public TerminalInputHandler(Terminal t)

@@ -14,7 +14,7 @@ Now you can simply do [almost!] anything at runtime using OpenTerminal!
 
 ## How to use: 
 - Add [TerminalCommand("commandName", "commandDescription")] Attribute to public
-    monobehaviour methods.
+    MonoBehaviour methods.
 - Create an empty game object and add Terminal component to it.
 - Run your game and press ` (the button usually on top of Tab button). On mobile long press with 4 fingers to show terminal.
 - Type your commandName and it will be execute!
