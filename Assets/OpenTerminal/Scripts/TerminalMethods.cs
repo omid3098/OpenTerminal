@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,21 +12,29 @@ public class TerminalMethods
     {
         methods = new List<MethodInfo>();
 
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        MonoBehaviour[] sceneActive = GameObject.FindObjectsOfType<MonoBehaviour>();
+
+        foreach (MonoBehaviour mono in sceneActive)
         {
-            foreach (var method in assembly.GetTypes().SelectMany(x => x.GetMethods()).Where(y => y.GetCustomAttributes(true).OfType<TerminalCommandAttribute>().Any()).ToList())
+            Type monoType = mono.GetType();
+
+            // Retreive the fields from the mono instance
+            MethodInfo[] methodFields = monoType.GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+            // search all fields and find the attribute
+            for (int i = 0; i < methodFields.Length; i++)
             {
-                methods.Add(method);
-                foreach (var attribute in method.GetCustomAttributes(true))
+                TerminalCommandAttribute attribute = Attribute.GetCustomAttribute(methodFields[i], typeof(TerminalCommandAttribute)) as TerminalCommandAttribute;
+
+                // if we detect any attribute print out the data.
+                if (attribute != null)
                 {
-                    if (attribute is TerminalCommandAttribute) //Does not pass
-                    {
-                        TerminalCommandAttribute attr = (TerminalCommandAttribute)attribute;
-                        methodNames.Add(attr.commandName);
-                    }
+                    methodNames.Add(attribute.commandName);
+                    methods.Add(methodFields[i]);
                 }
             }
         }
+
     }
 
     public string[] GetCommandsContaining(string input)
