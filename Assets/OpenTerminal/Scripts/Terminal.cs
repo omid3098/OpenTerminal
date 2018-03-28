@@ -33,7 +33,26 @@ public class Terminal : MonoBehaviour
         terminalGui = new TerminalGUI(this);
     }
 
-    internal void Hide()
+    [TerminalCommand("help", "Shows list of available commands")]
+    public string Help()
+    {
+        string help_string = "List of available commands:";
+        foreach (var method in Terminal.instance.terminalMethods.methods)
+        {
+            foreach (var attribute in method.GetCustomAttributes(true))
+            {
+                if (attribute is TerminalCommandAttribute) //Does not pass
+                {
+                    TerminalCommandAttribute attr = (TerminalCommandAttribute)attribute;
+                    help_string += "\n      " + attr.commandName + " --> " + attr.commandDesc;
+                }
+            }
+        }
+        return help_string;
+    }
+
+    [TerminalCommand("hide", "Hides the terminal")]
+    public void Hide()
     {
         displayTerminal = false;
     }
@@ -179,7 +198,9 @@ public class Terminal : MonoBehaviour
         if (registered) return null;
         return TerminalStrings.COMMAND_NOT_FOUND;
     }
-    internal void Clear()
+
+    [TerminalCommand("clear", "clears the terminal screen")]
+    public void Clear()
     {
         StartCoroutine(ClearTerminalCoroutine());
     }
