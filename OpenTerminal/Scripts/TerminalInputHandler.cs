@@ -4,7 +4,7 @@ using UnityEngine;
 public class TerminalInputHandler
 {
     private Terminal terminal;
-    private float touchDelay = 1.5f;
+    private float touchDelay = 5f;
     private float ellapsedTime = 0f;
     public TerminalInputHandler(Terminal t)
     {
@@ -25,7 +25,15 @@ public class TerminalInputHandler
             terminal.ToggleTerminal();
             return;
         }
-        if (!terminal.displayTerminal) return;
+        if (!terminal.DisplayTerminal) return;
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.L))
+        {
+            terminal.Clear();
+            return;
+        }
+
+
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
             terminal.OnBackSpacePressed();
@@ -70,7 +78,7 @@ public class TerminalInputHandler
         if (ellapsedTime > touchDelay)
         {
             ellapsedTime = 0;
-            if (terminal.displayTerminal)
+            if (terminal.DisplayTerminal)
             {
                 terminal.DisplayTouchScreenKeyboard();
                 return false;

@@ -7,37 +7,66 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 public class Terminal : MonoBehaviour
 {
-    public static Terminal instance;
     [SerializeField] public TerminalConfig config;
-    public bool displayTerminal { get; private set; }
-    public string inputText { get; private set; }
-    public string history { get; private set; }
-    public List<string> autoCompList { get; private set; }
-    public int autoCompIndex { get; private set; }
-    public string consoleLine { get { return (config.console + config.backslash + config.arrow + " "); } }
+    public bool DisplayTerminal { get; private set; }
+    public string InputText { get; private set; }
+    public string History { get; private set; }
+    public List<string> AutoCompList { get; private set; }
+    public int AutoCompIndex { get; private set; }
+    public string ConsoleLine => (config.console + " ");
     public TerminalMethods terminalMethods;
     private TerminalInputHandler inputHandler;
     private TerminalGUI terminalGui;
+    private LogStack logStack;
     public TouchScreenKeyboard touchScreenKeyboard;
     public int mobileTouchCount = 4;
 
     void Awake()
     {
-        instance = this;
+        DontDestroyOnLoad(gameObject);
         if (config == null) config = Resources.Load<TerminalConfig>("Config/ZSH");
         if (mobileTouchCount <= 0) mobileTouchCount = 4;
-        autoCompIndex = 0;
-        autoCompList = new List<string>();
+        AutoCompIndex = 0;
+        AutoCompList = new List<string>();
         terminalMethods = new TerminalMethods();
         inputHandler = new TerminalInputHandler(this);
         terminalGui = new TerminalGUI(this);
+        logStack = new LogStack(config);
+    }
+
+    void OnEnable()
+    {
+        Application.logMessageReceived += HandleLog;
+    }
+
+    void OnDisable()
+    {
+        Application.logMessageReceived -= HandleLog;
+    }
+
+    private void HandleLog(string logString, string stackTrace, LogType type)
+    {
+        logStack.AddLog(logString, stackTrace, type);
+    }
+
+
+    [TerminalCommand("report", "report logs to support")]
+    public void ReportLogs()
+    {
+        logStack.Share();
+    }
+
+    [TerminalCommand("clearLogs", "clear all previous logs")]
+    public void ClearLogs()
+    {
+        logStack.Clear();
     }
 
     [TerminalCommand("help", "Shows list of available commands")]
     public string Help()
     {
         string help_string = "List of available commands:";
-        foreach (var method in Terminal.instance.terminalMethods.methods)
+        foreach (var method in TerminalMethods.Methods)
         {
             foreach (var attribute in method.GetCustomAttributes(true))
             {
@@ -54,12 +83,12 @@ public class Terminal : MonoBehaviour
     [TerminalCommand("hide", "Hides the terminal")]
     public void Hide()
     {
-        displayTerminal = false;
+        DisplayTerminal = false;
     }
 
     void OnGUI()
     {
-        if (!displayTerminal) return;
+        if (!DisplayTerminal) return;
         terminalGui.OnGUI();
     }
 
@@ -74,7 +103,7 @@ public class Terminal : MonoBehaviour
     /// <param name="inputString"></param>
     internal void SetInputText(string inputString)
     {
-        inputText = inputString;
+        InputText = inputString;
     }
 
     /// <summary>
@@ -83,45 +112,45 @@ public class Terminal : MonoBehaviour
     /// <param name="input"></param>
     public void UpdateInputText(string input)
     {
-        inputText += input;
-        inputText = inputText.Replace("\b", "");
+        InputText += input;
+        InputText = InputText.Replace("\b", "");
     }
 
     public void OnUpArrowPressed()
     {
-        if (autoCompList.Count > 0)
-            autoCompIndex = (int)Mathf.Repeat(autoCompIndex - 1, autoCompList.Count);
+        if (AutoCompList.Count > 0)
+            AutoCompIndex = (int)Mathf.Repeat(AutoCompIndex - 1, AutoCompList.Count);
     }
 
     internal void ChangeInput(string input)
     {
-        inputText = input;
+        InputText = input;
     }
 
     public void OnDownArrowPressed()
     {
-        if (autoCompList.Count > 0)
-            autoCompIndex = (int)Mathf.Repeat(autoCompIndex + 1, autoCompList.Count);
+        if (AutoCompList.Count > 0)
+            AutoCompIndex = (int)Mathf.Repeat(AutoCompIndex + 1, AutoCompList.Count);
     }
 
     public void PreExecute()
     {
-        string result = ExecuteCommand(inputText);
-        history += consoleLine + inputText + "\n" + (!string.IsNullOrEmpty(result) ? (result + "\n") : "");
-        inputText = "";
+        string result = ExecuteCommand(InputText);
+        History += ConsoleLine + InputText + "\n" + (!string.IsNullOrEmpty(result) ? (result + "\n") : "");
+        InputText = "";
     }
 
     public void OnTabPressed()
     {
-        if (autoCompList.Count != 0) { OnEnterPressed(); return; }
-        autoCompIndex = 0;
-        autoCompList.Clear();
-        autoCompList.AddRange(terminalMethods.GetCommandsContaining(inputText));
+        if (AutoCompList.Count != 0) { OnEnterPressed(); return; }
+        AutoCompIndex = 0;
+        AutoCompList.Clear();
+        AutoCompList.AddRange(terminalMethods.GetCommandsContaining(InputText));
     }
 
     private string ExecuteCommand(string inputText)
     {
-        autoCompList.Clear();
+        AutoCompList.Clear();
         bool registered = false;
         string result = null;
         string insideParentheses = Regex.Match(inputText, @"\(([^)]*)\)").Groups[1].Value;
@@ -133,7 +162,7 @@ public class Terminal : MonoBehaviour
             command = inputText.Replace(insideParentheses, "").Replace("(", "").Replace(")", "").Replace(";", "");
         }
         else command = inputText.Replace("(", "").Replace(")", "").Replace(";", "");
-        foreach (var method in terminalMethods.methods)
+        foreach (var method in TerminalMethods.Methods)
         {
             foreach (object attribute in method.GetCustomAttributes(true)) // Returns all 3 of my attributes.
                 if (attribute is TerminalCommandAttribute)
@@ -153,7 +182,7 @@ public class Terminal : MonoBehaviour
                             Debug.Log(result);
                             return result;
                         }
-                        
+
                         // Cast Arguments if there is any
                         if (args.Count != 0)
                         {
@@ -211,12 +240,12 @@ public class Terminal : MonoBehaviour
     private IEnumerator ClearTerminalCoroutine()
     {
         yield return new WaitForEndOfFrame();
-        history = "";
+        History = "";
     }
 
     internal void ToggleTerminal()
     {
-        displayTerminal = !displayTerminal;
+        DisplayTerminal = !DisplayTerminal;
         DisplayTouchScreenKeyboard();
     }
 
@@ -224,9 +253,9 @@ public class Terminal : MonoBehaviour
     {
         if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
-            if (displayTerminal)
+            if (DisplayTerminal)
             {
-                touchScreenKeyboard = TouchScreenKeyboard.Open(inputText, TouchScreenKeyboardType.Default);
+                touchScreenKeyboard = TouchScreenKeyboard.Open(InputText, TouchScreenKeyboardType.Default);
                 TouchScreenKeyboard.hideInput = true;
             }
         }
@@ -234,14 +263,14 @@ public class Terminal : MonoBehaviour
 
     internal void OnBackSpacePressed()
     {
-        if (inputText.Length >= 1) inputText = inputText.Substring(0, inputText.Length - 1);
+        if (InputText.Length >= 1) InputText = InputText.Substring(0, InputText.Length - 1);
     }
     internal void OnEnterPressed()
     {
-        if (autoCompList.Count > 0)
+        if (AutoCompList.Count > 0)
         {
-            inputText = autoCompList[autoCompIndex];
-            autoCompList.Clear();
+            InputText = AutoCompList[AutoCompIndex];
+            AutoCompList.Clear();
         }
         else
             PreExecute();
