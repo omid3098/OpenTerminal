@@ -14,7 +14,7 @@ public class TerminalGUI
         config = terminal.config;
         terminalStyle = new GUIStyle();
         terminalStyle.font = config.font;
-        terminalStyle.fontSize = 16;
+        terminalStyle.fontSize = config.fontSize;
         terminalStyle.richText = true;
         terminalStyle.normal.textColor = config.commandColor;
         terminalStyle.hover.textColor = config.autoCompleteHoverColor;

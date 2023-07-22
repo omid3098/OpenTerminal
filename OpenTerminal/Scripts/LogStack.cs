@@ -80,6 +80,7 @@ public class LogStack
 
     string MyEscapeURL(string url)
     {
-        return WWW.EscapeURL(url).Replace("+", "%20");
+        // use UnityWebRequest.EscapeURL instead of WWW.EscapeURL
+        return UnityEngine.Networking.UnityWebRequest.EscapeURL(url).Replace("+", "%20");
     }
 }
