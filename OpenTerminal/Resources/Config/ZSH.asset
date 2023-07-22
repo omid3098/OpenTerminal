@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   console: " \u2192"
   font: {fileID: 12800000, guid: 1a32c30d99b6e784687c5a903045cb10, type: 3}
+  fontSize: 30
   commandColor: {r: 1, g: 1, b: 1, a: 1}
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.70980394}
   autoCompleteHoverColor: {r: 1, g: 0, b: 0, a: 1}
